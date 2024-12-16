@@ -3,8 +3,12 @@ pipeline {
 
     stages {
         stage('Checkout') {
+
             steps {
-                git 'https://github.com/SalmaHazal/Dockerized_Alumni.git'
+                git(
+                    url: 'https://github.com/SalmaHazal/Dockerized_Alumni.git',
+                    credentialsId: 'github_credentials'
+                )
             }
         }
 
