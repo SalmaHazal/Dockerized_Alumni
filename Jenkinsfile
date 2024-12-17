@@ -24,8 +24,25 @@ pipeline {
         stage('Remove Previous Docker Images') {
             steps {
                 script {
-                    sh 'docker rmi $(docker images -q --filter "dangling=true")'
-                    sh 'docker rmi $(docker images -q)'
+                    // Remove dangling images (if any)
+                    sh '''
+                    dangling_images=$(docker images -q --filter "dangling=true")
+                    if [ ! -z "$dangling_images" ]; then
+                        docker rmi $dangling_images
+                    else
+                        echo "No dangling images to remove."
+                    fi
+                    '''
+                    
+                    // Remove all other images (if any)
+                    sh '''
+                    all_images=$(docker images -q)
+                    if [ ! -z "$all_images" ]; then
+                        docker rmi $all_images
+                    else
+                        echo "No images to remove."
+                    fi
+                    '''
                 }
             }
         }
