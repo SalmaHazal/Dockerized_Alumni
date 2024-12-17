@@ -21,41 +21,41 @@ pipeline {
             }
         }
 
-        stage('Remove Previous Docker Images') {
-            steps {
-                script {
-                    // Stop and remove all containers
-                    sh '''
-                    running_containers=$(docker ps -q)
-                    if [ ! -z "$running_containers" ]; then
-                        echo "Stopping running containers..."
-                        docker stop $running_containers
-                    else
-                        echo "No running containers to stop."
-                    fi
+        // stage('Remove Previous Docker Images') {
+        //     steps {
+        //         script {
+        //             // Stop and remove all containers
+        //             sh '''
+        //             running_containers=$(docker ps -q)
+        //             if [ ! -z "$running_containers" ]; then
+        //                 echo "Stopping running containers..."
+        //                 docker stop $running_containers
+        //             else
+        //                 echo "No running containers to stop."
+        //             fi
 
-                    all_containers=$(docker ps -aq)
-                    if [ ! -z "$all_containers" ]; then
-                        echo "Removing all containers..."
-                        docker rm -f $all_containers
-                    else
-                        echo "No containers to remove."
-                    fi
-                    '''
+        //             all_containers=$(docker ps -aq)
+        //             if [ ! -z "$all_containers" ]; then
+        //                 echo "Removing all containers..."
+        //                 docker rm -f $all_containers
+        //             else
+        //                 echo "No containers to remove."
+        //             fi
+        //             '''
 
-                    // Remove all images, including those with dependencies, by forcing where necessary
-                    sh '''
-                    all_images=$(docker images -q)
-                    if [ ! -z "$all_images" ]; then
-                        echo "Removing all images..."
-                        docker rmi -f $all_images
-                    else
-                        echo "No images to remove."
-                    fi
-                    '''
-                }
-            }
-        }
+        //             // Remove all images, including those with dependencies, by forcing where necessary
+        //             sh '''
+        //             all_images=$(docker images -q)
+        //             if [ ! -z "$all_images" ]; then
+        //                 echo "Removing all images..."
+        //                 docker rmi -f $all_images
+        //             else
+        //                 echo "No images to remove."
+        //             fi
+        //             '''
+        //         }
+        //     }
+        // }
 
 
         stage('Build New Images') {
