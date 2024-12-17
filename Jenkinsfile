@@ -24,21 +24,31 @@ pipeline {
         stage('Remove Previous Docker Images') {
             steps {
                 script {
-                    // Remove dangling images (if any)
+                    // Stop and remove all containers
                     sh '''
-                    dangling_images=$(docker images -q --filter "dangling=true")
-                    if [ ! -z "$dangling_images" ]; then
-                        docker rmi $dangling_images
+                    running_containers=$(docker ps -q)
+                    if [ ! -z "$running_containers" ]; then
+                        echo "Stopping running containers..."
+                        docker stop $running_containers
                     else
-                        echo "No dangling images to remove."
+                        echo "No running containers to stop."
+                    fi
+
+                    all_containers=$(docker ps -aq)
+                    if [ ! -z "$all_containers" ]; then
+                        echo "Removing all containers..."
+                        docker rm -f $all_containers
+                    else
+                        echo "No containers to remove."
                     fi
                     '''
-                    
-                    // Remove all other images (if any)
+
+                    // Remove all images, including those with dependencies, by forcing where necessary
                     sh '''
                     all_images=$(docker images -q)
                     if [ ! -z "$all_images" ]; then
-                        docker rmi $all_images
+                        echo "Removing all images..."
+                        docker rmi -f $all_images
                     else
                         echo "No images to remove."
                     fi
@@ -46,6 +56,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Build New Images') {
             steps {
