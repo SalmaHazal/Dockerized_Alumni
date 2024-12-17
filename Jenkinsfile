@@ -7,6 +7,7 @@ pipeline {
             steps {
                 git(
                     url: 'https://github.com/SalmaHazal/Dockerized_Alumni.git',
+                    branch: 'main',
                     credentialsId: 'github_credentials'
                 )
             }
